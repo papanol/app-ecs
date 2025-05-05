@@ -5,13 +5,15 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
+      - echo Installing dependencies...
       - pip install -r requirements.txt
 
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - echo "ECR_REPO_URI: $ECR_REPO_URI"
+      - echo IMAGE_TAG=$IMAGE_TAG
+      - echo REPO=$ECR_REPO_URI
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO_URI
 
   build:
@@ -25,7 +27,7 @@ phases:
       - echo Pushing Docker image to ECR...
       - docker push $ECR_REPO_URI:$IMAGE_TAG
       - docker push $ECR_REPO_URI:latest
-      - echo Writing imagedefinitions.json...
+      - echo Writing image definitions file...
       - printf '[{"name":"flask-app","imageUri":"%s"}]' $ECR_REPO_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
