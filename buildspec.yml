@@ -6,7 +6,6 @@ phases:
       python: 3.11
     commands:
       - echo Installing dependencies...
-      - pip install -r requirements.txt
 
   pre_build:
     commands:
@@ -27,7 +26,7 @@ phases:
       - echo Pushing Docker image to ECR...
       - docker push $ECR_REPO_URI:$IMAGE_TAG
       - docker push $ECR_REPO_URI:latest
-      - echo Writing image definitions file...
+      - echo Writing imagedefinitions.json file...
       - printf '[{"name":"flask-app","imageUri":"%s"}]' $ECR_REPO_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
